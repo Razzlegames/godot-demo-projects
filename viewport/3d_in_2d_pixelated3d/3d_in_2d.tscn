@@ -18,9 +18,11 @@ frame = 4
 [node name="ViewportSprite" type="Sprite" parent="."]
 position = Vector2( 600, 320 )
 rotation = 3.14159
+scale = Vector2( 4, 4 )
 
 [node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 300, 300 )
+size = Vector2( 60, 60 )
+size_override_stretch = true
 own_world = true
 transparent_bg = true
 msaa = 2
