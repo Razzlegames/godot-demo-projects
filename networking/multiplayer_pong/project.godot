@@ -30,6 +30,7 @@ gdscript/warnings/return_value_discarded=false
 
 window/size/width=640
 window/size/height=400
+window/dpi/allow_hidpi=true
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
 stretch_2d=true
@@ -63,4 +64,5 @@ move_up={
 
 quality/driver/driver_name="GLES2"
 quality/2d/use_pixel_snap=true
-viewport/default_clear_color=Color( 0, 0, 0, 1 )
+vram_compression/import_etc=true
+vram_compression/import_etc2=false

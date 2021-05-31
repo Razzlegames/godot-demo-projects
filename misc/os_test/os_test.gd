@@ -39,6 +39,13 @@ func datetime_to_string(date):
 		})
 
 
+func scan_midi_devices():
+	OS.open_midi_inputs()
+	var devices = OS.get_connected_midi_inputs().join(", ")
+	OS.close_midi_inputs()
+	return devices
+
+
 func add_header(header):
 	rtl.append_bbcode("\n[b][u][color=#6df]{header}[/color][/u][/b]\n".format({
 		header = header,
@@ -58,7 +65,7 @@ func _ready():
 	for i in OS.get_audio_driver_count():
 		audio_drivers.push_back(OS.get_audio_driver_name(i))
 	add_line("Available drivers", audio_drivers.join(", "))
-	add_line("MIDI inputs", OS.get_connected_midi_inputs().join(", "))
+	add_line("MIDI inputs", scan_midi_devices())
 
 	add_header("Date")
 	add_line("Date and time (local)", datetime_to_string(OS.get_datetime()))
@@ -123,10 +130,8 @@ func _ready():
 	add_line("Mono module enabled", "Yes" if mono_enabled else "No")
 	if mono_enabled:
 		mono_test.set_script(load("res://MonoTest.cs"))
-		add_line("Architecture", mono_test.Architecture())
 		add_line("Operating System", mono_test.OperatingSystem())
 		add_line("Platform Type", mono_test.PlatformType())
-		add_line("Texture Compression", mono_test.TextureCompression())
 
 	add_header("Software")
 	add_line("OS name", OS.get_name())

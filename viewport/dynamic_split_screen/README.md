@@ -3,12 +3,14 @@
 This sample project showcases an implementation of dynamic
 split screen, also called Voronoi split screen.
 
-Language: [GDSL](https://docs.godotengine.org/en/latest/tutorials/shading/shading_reference/shading_language.html) and GDScript
+Language: [GDSL](https://docs.godotengine.org/en/latest/tutorials/shaders/shader_reference/shading_language.html) and GDScript
 
 Renderer: GLES 2
 
 Note: An HTML5 export is testable
 [here](https://benjaminnavarro.github.io/godot_dynamic_split_screen/index.html).
+
+Check out this demo on the asset library: https://godotengine.org/asset-library/asset/541
 
 ## Details
 

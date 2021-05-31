@@ -6,21 +6,39 @@ public class Player : Area2D
     public delegate void Hit();
 
     [Export]
-    public int speed; // How fast the player will move (pixels/sec).
+    public int speed = 400; // How fast the player will move (pixels/sec).
 
-    private Vector2 _screenSize; // Size of the game window.
+    public Vector2 screenSize; // Size of the game window.
 
     public override void _Ready()
     {
-        _screenSize = GetViewport().GetSize();
+        screenSize = GetViewportRect().Size;
         Hide();
     }
 
     public override void _Process(float delta)
     {
-        Vector2 velocity; // The player's movement vector.
-        velocity.x = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-        velocity.y = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
+        var velocity = Vector2.Zero; // The player's movement vector.
+
+        if (Input.IsActionPressed("move_right"))
+        {
+            velocity.x += 1;
+        }
+
+        if (Input.IsActionPressed("move_left"))
+        {
+            velocity.x -= 1;
+        }
+
+        if (Input.IsActionPressed("move_down"))
+        {
+            velocity.y += 1;
+        }
+
+        if (Input.IsActionPressed("move_up"))
+        {
+            velocity.y -= 1;
+        }
 
         var animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
 
@@ -36,8 +54,8 @@ public class Player : Area2D
 
         Position += velocity * delta;
         Position = new Vector2(
-            x: Mathf.Clamp(Position.x, 0, _screenSize.x),
-            y: Mathf.Clamp(Position.y, 0, _screenSize.y)
+            x: Mathf.Clamp(Position.x, 0, screenSize.x),
+            y: Mathf.Clamp(Position.y, 0, screenSize.y)
         );
 
         if (velocity.x != 0)
@@ -58,15 +76,14 @@ public class Player : Area2D
     {
         Position = pos;
         Show();
-        // Must be deferred as we can't change physics properties on a physics callback.
-        GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("Disabled", false);
+        GetNode<CollisionShape2D>("CollisionShape2D").Disabled = false;
     }
 
     public void OnPlayerBodyEntered(PhysicsBody2D body)
     {
         Hide(); // Player disappears after being hit.
-        EmitSignal("Hit");
+        EmitSignal(nameof(Hit));
         // Must be deferred as we can't change physics properties on a physics callback.
-        GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("Disabled", true);
+        GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("disabled", true);
     }
 }

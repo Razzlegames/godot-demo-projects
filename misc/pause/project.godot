@@ -22,6 +22,7 @@ config/icon="res://icon.png"
 
 [display]
 
+window/dpi/allow_hidpi=true
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
 
@@ -33,4 +34,6 @@ singletons=[  ]
 
 quality/driver/driver_name="GLES2"
 quality/intended_usage/framebuffer_allocation=3
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
 quality/filters/msaa=2

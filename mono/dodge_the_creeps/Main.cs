@@ -1,20 +1,18 @@
 using Godot;
-using System;
 
 public class Main : Node
 {
+#pragma warning disable 649
+    // We assign this in the editor, so we don't need the warning about not being assigned.
     [Export]
-    public PackedScene mob;
+    public PackedScene mobScene;
+#pragma warning restore 649
 
-    private int _score;
+    public int score;
 
-    // We use 'System.Random' as an alternative to GDScript's random methods.
-    private Random _random = new Random();
-
-    // We'll use this later because C# doesn't support GDScript's randi().
-    private float RandRange(float min, float max)
+    public override void _Ready()
     {
-        return (float)_random.NextDouble() * (max - min) + min;
+        GD.Randomize();
     }
 
     public void GameOver()
@@ -30,7 +28,10 @@ public class Main : Node
 
     public void NewGame()
     {
-        _score = 0;
+        // Note that for calling Godot-provided methods with strings,
+        // we have to use the original Godot snake_case name.
+        GetTree().CallGroup("mobs", "queue_free");
+        score = 0;
 
         var player = GetNode<Player>("Player");
         var startPosition = GetNode<Position2D>("StartPosition");
@@ -39,7 +40,7 @@ public class Main : Node
         GetNode<Timer>("StartTimer").Start();
 
         var hud = GetNode<HUD>("HUD");
-        hud.UpdateScore(_score);
+        hud.UpdateScore(score);
         hud.ShowMessage("Get Ready!");
 
         GetNode<AudioStreamPlayer>("Music").Play();
@@ -53,38 +54,37 @@ public class Main : Node
 
     public void OnScoreTimerTimeout()
     {
-        _score++;
+        score++;
 
-        GetNode<HUD>("HUD").UpdateScore(_score);
+        GetNode<HUD>("HUD").UpdateScore(score);
     }
 
     public void OnMobTimerTimeout()
     {
-        // Note: Normally it is best to use explicit types rather than the var keyword.
-        // However, var is acceptable to use here because the types are obviously
-        // PathFollow2D and RigidBody2D, since they appear later on the line.
+        // Note: Normally it is best to use explicit types rather than the `var`
+        // keyword. However, var is acceptable to use here because the types are
+        // obviously PathFollow2D and Mob, since they appear later on the line.
 
         // Choose a random location on Path2D.
         var mobSpawnLocation = GetNode<PathFollow2D>("MobPath/MobSpawnLocation");
-        mobSpawnLocation.SetOffset(_random.Next());
+        mobSpawnLocation.Offset = GD.Randi();
 
         // Create a Mob instance and add it to the scene.
-        var mobInstance = (RigidBody2D)mob.Instance();
-        AddChild(mobInstance);
+        var mob = (Mob)mobScene.Instance();
+        AddChild(mob);
 
         // Set the mob's direction perpendicular to the path direction.
-        float direction = mobSpawnLocation.Rotation + Mathf.Tau / 4;
+        float direction = mobSpawnLocation.Rotation + Mathf.Pi / 2;
 
         // Set the mob's position to a random location.
-        mobInstance.Position = mobSpawnLocation.Position;
+        mob.Position = mobSpawnLocation.Position;
 
         // Add some randomness to the direction.
-        direction += RandRange(-Mathf.Tau / 8, Mathf.Tau / 8);
-        mobInstance.Rotation = direction;
+        direction += (float)GD.RandRange(-Mathf.Pi / 4, Mathf.Pi / 4);
+        mob.Rotation = direction;
 
         // Choose the velocity.
-        mobInstance.SetLinearVelocity(new Vector2(RandRange(150f, 250f), 0).Rotated(direction));
-
-        GetNode("HUD").Connect("StartGame", mobInstance, "OnStartGame");
+        var velocity = new Vector2((float)GD.RandRange(mob.minSpeed, mob.maxSpeed), 0);
+        mob.LinearVelocity = velocity.Rotated(direction);
     }
 }
