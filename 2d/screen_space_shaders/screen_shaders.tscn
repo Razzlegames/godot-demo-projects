@@ -152,7 +152,6 @@ texture = ExtResource( 8 )
 expand = true
 
 [node name="Pixelize" type="TextureRect" parent="Effects"]
-visible = false
 material = SubResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -160,6 +159,9 @@ size_flags_horizontal = 2
 size_flags_vertical = 2
 texture = ExtResource( 8 )
 expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Whirl" type="TextureRect" parent="Effects"]
 visible = false
